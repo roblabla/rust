@@ -14,6 +14,8 @@ use sync::atomic::{self, Ordering};
 use sys::stack_overflow;
 use sys::thread as imp;
 
+// TODO: Remove when horizon threads start working
+#[cfg_attr(target_os = "horizon", allow(dead_code))]
 pub unsafe fn start_thread(main: *mut u8) {
     // Next, set up our stack overflow handler which may get triggered if we run
     // out of stack.

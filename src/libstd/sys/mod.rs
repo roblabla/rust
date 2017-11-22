@@ -46,6 +46,10 @@ mod imp;
 #[path = "redox/mod.rs"]
 mod imp;
 
+#[cfg(target_os = "horizon")]
+#[path = "horizon/mod.rs"]
+mod imp;
+
 
 // Import essential modules from both platforms when documenting.
 

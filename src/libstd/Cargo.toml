@@ -10,7 +10,7 @@ description = "The Rust Standard Library"
 [lib]
 name = "std"
 path = "lib.rs"
-crate-type = ["dylib", "rlib"]
+crate-type = ["rlib"]
 
 [dependencies]
 alloc = { path = "../liballoc" }

@@ -44,10 +44,10 @@ pub mod thread_local;
 pub mod util;
 pub mod wtf8;
 
-#[cfg(any(target_os = "redox", target_os = "l4re"))]
+#[cfg(any(target_os = "redox", target_os = "horizon", target_os = "l4re"))]
 pub use sys::net;
 
-#[cfg(not(any(target_os = "redox", target_os = "l4re")))]
+#[cfg(not(any(target_os = "redox", target_os = "horizon", target_os = "l4re")))]
 pub mod net;
 
 #[cfg(feature = "backtrace")]
