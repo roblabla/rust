@@ -25,7 +25,7 @@
 
 #![panic_runtime]
 #![feature(panic_runtime)]
-#![cfg_attr(unix, feature(libc))]
+#![cfg_attr(any(unix, target_os = "horizon"), feature(libc))]
 #![cfg_attr(any(target_os = "redox", windows), feature(core_intrinsics))]
 
 // Rust's "try" function, but if we're aborting on panics we just call the
@@ -53,7 +53,7 @@ pub unsafe extern fn __rust_maybe_catch_panic(f: fn(*mut u8),
 pub unsafe extern fn __rust_start_panic(_data: usize, _vtable: usize) -> u32 {
     abort();
 
-    #[cfg(unix)]
+    #[cfg(any(target_os = "horizon", unix))]
     unsafe fn abort() -> ! {
         extern crate libc;
         libc::abort();
