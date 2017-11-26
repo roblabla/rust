@@ -22,7 +22,6 @@ static NEXT_KEY: AtomicUsize = ATOMIC_USIZE_INIT;
 
 static mut KEYS: *mut BTreeMap<Key, Option<Dtor>> = ptr::null_mut();
 
-#[thread_local]
 static mut LOCALS: *mut BTreeMap<Key, *mut u8> = ptr::null_mut();
 
 unsafe fn keys() -> &'static mut BTreeMap<Key, Option<Dtor>> {
@@ -33,6 +32,7 @@ unsafe fn keys() -> &'static mut BTreeMap<Key, Option<Dtor>> {
 }
 
 unsafe fn locals() -> &'static mut BTreeMap<Key, *mut u8> {
+    // TODO: Check current thread is main thread, use unimplemented!() otherwise.
     if LOCALS == ptr::null_mut() {
         LOCALS = Box::into_raw(Box::new(BTreeMap::new()));
     }

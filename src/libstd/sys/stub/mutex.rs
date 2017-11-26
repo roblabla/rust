@@ -15,14 +15,12 @@ pub unsafe fn mutex_try_lock(m: *mut i32) -> bool {
     atomic_cxchg(m, 0, 1).0 == 0
 }
 
-// TODO: Create stupid mutex (that just yields in a while loop)
-// NOTE: We're in a cooperatively scheduled environment
+// TODO: Create stupid mutex that assumes (and enforces) single-threaded
+// environment
 pub unsafe fn mutex_lock(_m: *mut i32) {
-    unimplemented!();
 }
 
 pub unsafe fn mutex_unlock(_m: *mut i32) {
-    unimplemented!();
 }
 
 pub struct Mutex {
@@ -95,21 +93,20 @@ impl ReentrantMutex {
     /// Try to lock the mutex
     #[inline]
     pub unsafe fn try_lock(&self) -> bool {
-        // TODO: Implement this. Need raw syscall to get thread id, using
-        // thread::id is not possible, it uses a mutex too :(
-        unimplemented!();
+        // TODO: Implement this, check if self is main thread, panic otherwise.
+        mutex_try_lock(self.lock.get())
     }
 
     /// Lock the mutex
     #[inline]
     pub unsafe fn lock(&self) {
-        unimplemented!();
+        mutex_lock(self.lock.get())
     }
 
     /// Unlock the mutex
     #[inline]
     pub unsafe fn unlock(&self) {
-        unimplemented!();
+        mutex_unlock(self.lock.get())
     }
 
     #[inline]

@@ -60,7 +60,7 @@ impl io::Write for Stderr {
 }
 
 pub fn is_ebadf(_err: &io::Error) -> bool {
-    unimplemented!();
+    false
 }
 
 pub const STDIN_BUF_SIZE: usize = ::sys_common::io::DEFAULT_BUF_SIZE;
