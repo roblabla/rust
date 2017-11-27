@@ -373,6 +373,10 @@ extern crate std_unicode;
 #[doc(masked)]
 extern crate libc;
 
+// Allows access to various syscalls and functions
+#[cfg(target_os = "horizon")]
+extern crate libtransistor_sys;
+
 // We always need an unwinder currently for backtraces
 #[doc(masked)]
 #[allow(unused_extern_crates)]

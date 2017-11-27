@@ -28,6 +28,9 @@ unwind = { path = "../libunwind" }
 [dev-dependencies]
 rand = "0.3"
 
+[target.aarch64-nintendo-horizon-newlib.dependencies]
+libtransistor-sys = { path = "../libtransistor-sys" }
+
 [target.x86_64-apple-darwin.dependencies]
 rustc_asan = { path = "../librustc_asan" }
 rustc_tsan = { path = "../librustc_tsan" }
