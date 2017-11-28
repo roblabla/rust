@@ -17,10 +17,10 @@ fn main() {
     println!("cargo:rustc-link-lib=static=c");
     println!("cargo:rustc-link-lib=static=ssp");
     println!("cargo:rustc-link-lib=static=clang_rt.builtins-aarch64");
-    println!("cargo:rustc-link-search=native={}/libtransistor/build/lib", dir);
+    /*println!("cargo:rustc-link-search=native={}/libtransistor/build/lib", dir);
     println!("cargo:rustc-link-search=native={}/libtransistor/build/compiler-rt/lib/linux", dir);
     println!("cargo:rustc-link-search=native={}/libtransistor/libssp", dir);
-    println!("cargo:rustc-link-search=native={}/libtransistor/newlib/aarch64-none-switch/newlib", dir);
+    println!("cargo:rustc-link-search=native={}/libtransistor/newlib/aarch64-none-switch/newlib", dir);*/
 
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
 
