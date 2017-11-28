@@ -8,41 +8,53 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use io::{self, Error, ErrorKind};
+use io;
+use sys::cvt;
+use libc;
 
-pub struct Stdin(());
-pub struct Stdout(());
-pub struct Stderr(());
+pub struct Stdin;
+pub struct Stdout;
+pub struct Stderr;
 
 impl Stdin {
-    pub fn new() -> io::Result<Stdin> { Ok(Stdin(())) }
+    pub fn new() -> io::Result<Stdin> { Ok(Stdin) }
 
-    pub fn read(&self, _data: &mut [u8]) -> io::Result<usize> {
-        Err(Error::new(ErrorKind::Other, "Stdin::read not implemented"))
+    pub fn read(&self, data: &mut [u8]) -> io::Result<usize> {
+        unsafe {
+            // TODO: Tuck the unsafe inside a "FileDesc" struct
+            let ret = cvt(libc::read(libc::STDIN_FILENO, data.as_mut_ptr() as *mut _, data.len()))?;
+            Ok(ret as usize)
+        }
     }
 }
 
 impl Stdout {
-    pub fn new() -> io::Result<Stdout> { Ok(Stdout(())) }
+    pub fn new() -> io::Result<Stdout> { Ok(Stdout) }
 
-    pub fn write(&self, _data: &[u8]) -> io::Result<usize> {
-        Err(Error::new(ErrorKind::Other, "Stdout::write not implemented"))
+    pub fn write(&self, data: &[u8]) -> io::Result<usize> {
+        unsafe {
+            let ret = cvt(libc::write(libc::STDOUT_FILENO, data.as_ptr() as *const _, data.len()))?;
+            Ok(ret as usize)
+        }
     }
 
     pub fn flush(&self) -> io::Result<()> {
-        Err(Error::new(ErrorKind::Other, "Stdout::flush not implemented"))
+        Ok(())
     }
 }
 
 impl Stderr {
-    pub fn new() -> io::Result<Stderr> { Ok(Stderr(())) }
+    pub fn new() -> io::Result<Stderr> { Ok(Stderr) }
 
-    pub fn write(&self, _data: &[u8]) -> io::Result<usize> {
-        Err(Error::new(ErrorKind::Other, "Stderr::write not implemented"))
+    pub fn write(&self, data: &[u8]) -> io::Result<usize> {
+        unsafe {
+            let ret = cvt(libc::write(libc::STDERR_FILENO, data.as_ptr() as *const _, data.len()))?;
+            Ok(ret as usize)
+        }
     }
 
     pub fn flush(&self) -> io::Result<()> {
-        Err(Error::new(ErrorKind::Other, "Stderr::flush not implemented"))
+        Ok(())
     }
 }
 

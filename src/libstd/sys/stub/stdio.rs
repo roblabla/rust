@@ -10,12 +10,12 @@
 
 use io::{self, Error, ErrorKind};
 
-pub struct Stdin(());
-pub struct Stdout(());
-pub struct Stderr(());
+pub struct Stdin;
+pub struct Stdout;
+pub struct Stderr;
 
 impl Stdin {
-    pub fn new() -> io::Result<Stdin> { Ok(Stdin(())) }
+    pub fn new() -> io::Result<Stdin> { Ok(Stdin) }
 
     pub fn read(&self, _data: &mut [u8]) -> io::Result<usize> {
         Err(Error::new(ErrorKind::Other, "Stdin::read not implemented"))
@@ -23,7 +23,7 @@ impl Stdin {
 }
 
 impl Stdout {
-    pub fn new() -> io::Result<Stdout> { Ok(Stdout(())) }
+    pub fn new() -> io::Result<Stdout> { Ok(Stdout) }
 
     pub fn write(&self, _data: &[u8]) -> io::Result<usize> {
         Err(Error::new(ErrorKind::Other, "Stdout::write not implemented"))
@@ -35,7 +35,7 @@ impl Stdout {
 }
 
 impl Stderr {
-    pub fn new() -> io::Result<Stderr> { Ok(Stderr(())) }
+    pub fn new() -> io::Result<Stderr> { Ok(Stderr) }
 
     pub fn write(&self, _data: &[u8]) -> io::Result<usize> {
         Err(Error::new(ErrorKind::Other, "Stderr::write not implemented"))
