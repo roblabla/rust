@@ -1,15 +1,18 @@
 [package]
-name = "libc"
+name = "libtransistor-sys"
 version = "0.0.0"
 authors = ["The Rust Project Developers"]
-build = "../../liblibc/build.rs"
+build = "../libtransistor-rs/libtransistor-sys/build.rs"
 
 [lib]
-name = "libc"
-path = "../../liblibc/src/lib.rs"
+name = "libtransistor_sys"
+path = "../libtransistor-rs/libtransistor-sys/src/lib.rs"
 test = false
 bench = false
 doc = false
+
+[build-dependencies.bindgen]
+git = "https://github.com/rust-lang-nursery/rust-bindgen"
 
 [dependencies]
 # Specify the path to libcore; at the time of writing, removing this shim in
@@ -29,10 +32,8 @@ doc = false
 # expected success, got: exit code: 101', src/bootstrap/compile.rs:883:8
 #
 # See https://github.com/rust-lang/rfcs/pull/1133.
-core = { path = "../../libcore" }
+core = { path = "../libcore" }
+libc = { path = "../rustc/libc_shim", optional = true }
 
 [features]
-# Certain parts of libc are conditionally compiled differently than when used
-# outside rustc. See https://github.com/rust-lang/libc/search?l=Rust&q=stdbuild&type=&utf8=%E2%9C%93.
-stdbuild = []
-default = ["stdbuild"]
+default = ["libc"]

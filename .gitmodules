@@ -42,7 +42,7 @@
 [submodule "src/tools/miri"]
 	path = src/tools/miri
 	url = https://github.com/solson/miri.git
-[submodule "src/libtransistor-sys/libtransistor"]
-	path = src/libtransistor-sys/libtransistor
-	url = https://github.com/reswitched/libtransistor.git
+[submodule "src/libtransistor-rs"]
+	path = src/libtransistor-rs
+	url = https://github.com/roblabla/libtransistor-rs
 	branch = master
