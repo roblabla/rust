@@ -13,6 +13,7 @@
 use collections::BTreeMap;
 use ptr;
 use sync::atomic::{AtomicUsize, ATOMIC_USIZE_INIT, Ordering};
+use libtransistor_sys;
 
 pub type Key = usize;
 
@@ -22,8 +23,6 @@ static NEXT_KEY: AtomicUsize = ATOMIC_USIZE_INIT;
 
 static mut KEYS: *mut BTreeMap<Key, Option<Dtor>> = ptr::null_mut();
 
-static mut LOCALS: *mut BTreeMap<Key, *mut u8> = ptr::null_mut();
-
 unsafe fn keys() -> &'static mut BTreeMap<Key, Option<Dtor>> {
     if KEYS == ptr::null_mut() {
         KEYS = Box::into_raw(Box::new(BTreeMap::new()));
@@ -31,12 +30,15 @@ unsafe fn keys() -> &'static mut BTreeMap<Key, Option<Dtor>> {
     &mut *KEYS
 }
 
+// TODO: Completely assumes libc doesn't exist ! :D
 unsafe fn locals() -> &'static mut BTreeMap<Key, *mut u8> {
-    // TODO: Check current thread is main thread, use unimplemented!() otherwise.
-    if LOCALS == ptr::null_mut() {
-        LOCALS = Box::into_raw(Box::new(BTreeMap::new()));
+    let tls = libtransistor_sys::get_tls() as *mut u8;
+    let tls_ptr = tls.offset(0x1F8) as *mut *mut BTreeMap<Key, *mut u8>;
+    if (*tls_ptr).is_null() {
+        let tls_box = Box::new(BTreeMap::new());
+        *tls_ptr = Box::into_raw(tls_box);
     }
-    &mut *LOCALS
+    &mut **tls_ptr
 }
 
 #[inline]
