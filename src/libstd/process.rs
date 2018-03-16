@@ -1401,12 +1401,12 @@ pub fn id() -> u32 {
     ::sys::os::getpid()
 }
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(any(target_os = "switch", target_arch = "wasm32"))]
 mod exit {
     pub const SUCCESS: i32 = 0;
     pub const FAILURE: i32 = 1;
 }
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(any(target_os = "switch", target_arch = "wasm32")))]
 mod exit {
     use libc;
     pub const SUCCESS: i32 = libc::EXIT_SUCCESS;

@@ -13,7 +13,10 @@
 #![unstable(issue = "32838", feature = "allocator_api")]
 
 pub use alloc::heap::{Heap, Alloc, Layout, Excess, CannotReallocInPlace, AllocErr};
+#[cfg(not(target_os = "switch"))]
 pub use alloc_system::System;
+#[cfg(target_os = "switch")]
+pub use ralloc::Allocator as System;
 
 #[cfg(not(test))]
 #[doc(hidden)]

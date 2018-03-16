@@ -334,13 +334,19 @@
 // `force_alloc_system` is *only* intended as a workaround for local rebuilds
 // with a rustc without jemalloc.
 // FIXME(#44236) shouldn't need MSVC logic
-#![cfg_attr(all(not(target_env = "msvc"),
+#![cfg_attr(any(
+        all(not(target_env = "msvc"),
                 any(stage0, feature = "force_alloc_system")),
+        target_os = "switch"),
             feature(global_allocator))]
-#[cfg(all(not(target_env = "msvc"),
+#[cfg(all(not(target_env = "msvc"), not(target_os = "switch"),
           any(stage0, feature = "force_alloc_system")))]
 #[global_allocator]
 static ALLOC: alloc_system::System = alloc_system::System;
+
+#[cfg(target_os = "switch")]
+#[global_allocator]
+static ALLOC: ralloc::Allocator = ralloc::Allocator;
 
 // Explicitly import the prelude. The compiler uses this same unstable attribute
 // to import the prelude implicitly when building crates that depend on std.
@@ -364,6 +370,9 @@ extern crate core as __core;
 extern crate alloc;
 #[cfg(not(target_os = "switch"))]
 extern crate alloc_system;
+#[cfg(target_os = "switch")]
+extern crate ralloc;
+
 extern crate std_unicode;
 #[cfg(not(target_os = "switch"))]
 #[doc(masked)]
