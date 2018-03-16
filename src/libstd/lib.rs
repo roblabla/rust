@@ -359,7 +359,9 @@ pub use core::{unreachable, unimplemented, write, writeln, try};
 #[allow(unused_imports)] // macros from `alloc` are not used on all platforms
 #[macro_use]
 extern crate alloc as alloc_crate;
+#[cfg(not(target_os = "switch"))]
 extern crate alloc_system;
+#[cfg(not(target_os = "switch"))]
 #[doc(masked)]
 extern crate libc;
 

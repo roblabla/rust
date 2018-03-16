@@ -27,6 +27,8 @@ cfg_if! {
         // no extra unwinder support needed
     } else if #[cfg(all(target_arch = "wasm32", not(target_os = "emscripten")))] {
         // no unwinder on the system!
+    } else if #[cfg(target_os = "switch")] {
+        // no unwinder support for now
     } else {
         extern crate libc;
         mod libunwind;
