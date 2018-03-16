@@ -27,6 +27,9 @@ unwind = { path = "../libunwind" }
 libc = { path = "../rustc/libc_shim" }
 alloc_system = { path = "../liballoc_system" }
 
+[target.'cfg(target_os = "switch")'.dependencies]
+ralloc = { git = "https://github.com/megatonhammer/ralloc" }
+
 [dev-dependencies]
 rand = "0.4"
 
