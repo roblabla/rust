@@ -13,5 +13,5 @@ bench = false
 name = "std_unicode_tests"
 path = "tests/lib.rs"
 
-[dependencies]
-core = { path = "../libcore" }
+#[dependencies]
+#core = { path = "../libcore" }
