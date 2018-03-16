@@ -362,8 +362,10 @@ extern crate core as __core;
 #[macro_use]
 #[macro_reexport(vec, format)]
 extern crate alloc;
+#[cfg(not(target_os = "switch"))]
 extern crate alloc_system;
 extern crate std_unicode;
+#[cfg(not(target_os = "switch"))]
 #[doc(masked)]
 extern crate libc;
 

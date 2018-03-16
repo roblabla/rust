@@ -11,4 +11,6 @@ doc = false
 
 [dependencies]
 core = { path = "../libcore" }
+
+[target.'cfg(not(target_os = "switch"))'.dependencies]
 libc = { path = "../rustc/libc_shim" }
