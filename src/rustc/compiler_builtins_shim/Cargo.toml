@@ -27,7 +27,7 @@ doctest = false
 # expected success, got: exit code: 101', src/bootstrap/compile.rs:883:8
 #
 # See https://github.com/rust-lang/rfcs/pull/1133.
-core = { path = "../../libcore" }
+#core = { path = "../../libcore" }
 
 [build-dependencies]
 cc = "1.0.1"
