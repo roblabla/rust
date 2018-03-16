@@ -9,6 +9,6 @@ path = "lib.rs"
 test = false
 bench = false
 
-[dependencies]
-core = { path = "../libcore" }
-compiler_builtins = { path = "../rustc/compiler_builtins_shim" }
+#[dependencies]
+#core = { path = "../libcore" }
+#compiler_builtins = { path = "../rustc/compiler_builtins_shim" }

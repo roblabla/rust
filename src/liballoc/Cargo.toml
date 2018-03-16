@@ -9,9 +9,9 @@ autobenches = false
 name = "alloc"
 path = "lib.rs"
 
-[dependencies]
-core = { path = "../libcore" }
-compiler_builtins = { path = "../rustc/compiler_builtins_shim" }
+#[dependencies]
+#core = { path = "../libcore" }
+#compiler_builtins = { path = "../rustc/compiler_builtins_shim" }
 
 [dev-dependencies]
 rand = "0.4"
