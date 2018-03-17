@@ -29,6 +29,7 @@ alloc_system = { path = "../liballoc_system" }
 
 [target.'cfg(target_os = "switch")'.dependencies]
 ralloc = { git = "https://github.com/megatonhammer/ralloc", default-features = false }
+megaton-hammer = { git = "https://github.com/megatonhammer/megaton-hammer" }
 
 [dev-dependencies]
 rand = "0.4"
