@@ -1,4 +1,4 @@
-// Copyright 2016 The Rust Project Developers. See the COPYRIGHT
+// Copyright 2017 The Rust Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution and at
 // http://rust-lang.org/COPYRIGHT.
 //
@@ -11,41 +11,35 @@
 use sys::mutex::Mutex;
 use time::Duration;
 
-pub struct Condvar;
+// TODO: The switch has proper condvars too.
+
+pub struct Condvar { }
 
 impl Condvar {
     pub const fn new() -> Condvar {
-        // TODO: Sadly can't panic in const fn yet.
-        Condvar
+        Condvar { }
     }
 
     #[inline]
-    pub unsafe fn init(&self) {
-        unimplemented!()
+    pub unsafe fn init(&mut self) {}
+
+    #[inline]
+    pub unsafe fn notify_one(&self) {
     }
 
     #[inline]
-    pub fn notify_one(&self) {
-        unimplemented!()
+    pub unsafe fn notify_all(&self) {
     }
 
-    #[inline]
-    pub fn notify_all(&self) {
-        unimplemented!()
+    pub unsafe fn wait(&self, _mutex: &Mutex) {
+        panic!("can't block with web assembly")
     }
 
-    #[inline]
-    pub fn wait(&self, _mutex: &Mutex) {
-        unimplemented!()
-    }
-
-    #[inline]
-    pub fn wait_timeout(&self, _mutex: &Mutex, _dur: Duration) -> bool {
-        unimplemented!();
+    pub unsafe fn wait_timeout(&self, _mutex: &Mutex, _dur: Duration) -> bool {
+        panic!("can't block with web assembly");
     }
 
     #[inline]
     pub unsafe fn destroy(&self) {
-        unimplemented!()
     }
 }
