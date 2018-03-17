@@ -1,4 +1,4 @@
-// Copyright 2016 The Rust Project Developers. See the COPYRIGHT
+// Copyright 2017 The Rust Project Developers. See the COPYRIGHT
 // file at the top-level directory of this distribution and at
 // http://rust-lang.org/COPYRIGHT.
 //
@@ -8,89 +8,73 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-pub unsafe fn mutex_try_lock(_m: *mut i32) -> bool {
-    unimplemented!()
+// TODO: Properly implement mutex. The switch has multiple syscalls to implement
+// mutexes properly.
+
+use cell::UnsafeCell;
+
+pub struct Mutex {
+    locked: UnsafeCell<bool>,
 }
 
-pub unsafe fn mutex_lock(_m: *mut i32) {
-    unimplemented!()
-}
-
-pub unsafe fn mutex_unlock(_m: *mut i32) {
-    unimplemented!()
-}
-
-pub struct Mutex;
+unsafe impl Send for Mutex {}
+unsafe impl Sync for Mutex {} // no threads on wasm
 
 impl Mutex {
-    /// Create a new mutex.
-    pub const fn new() -> Self {
-        // TODO: Sadly can't panic in constfn yet
-        Mutex
-    }
-
-    #[inline]
-    pub unsafe fn init(&self) {
-        unimplemented!()
-    }
-
-    /// Try to lock the mutex
-    #[inline]
-    pub unsafe fn try_lock(&self) -> bool {
-        unimplemented!()
-    }
-
-    /// Lock the mutex
-    #[inline]
-    pub unsafe fn lock(&self) {
-        unimplemented!()
-    }
-
-    /// Unlock the mutex
-    #[inline]
-    pub unsafe fn unlock(&self) {
-        unimplemented!()
-    }
-
-    #[inline]
-    pub unsafe fn destroy(&self) {
-        unimplemented!()
-    }
-}
-
-pub struct ReentrantMutex;
-
-impl ReentrantMutex {
-    pub const fn uninitialized() -> Self {
-        // TODO: Sadly can't panic in constfn yet
-        ReentrantMutex
+    pub const fn new() -> Mutex {
+        Mutex { locked: UnsafeCell::new(false) }
     }
 
     #[inline]
     pub unsafe fn init(&mut self) {
-        unimplemented!()
     }
 
-    /// Try to lock the mutex
-    #[inline]
-    pub unsafe fn try_lock(&self) -> bool {
-        unimplemented!()
-    }
-
-    /// Lock the mutex
     #[inline]
     pub unsafe fn lock(&self) {
-        unimplemented!()
+        let locked = self.locked.get();
+        assert!(!*locked, "cannot recursively acquire mutex");
+        *locked = true;
     }
 
-    /// Unlock the mutex
     #[inline]
     pub unsafe fn unlock(&self) {
-        unimplemented!()
+        *self.locked.get() = false;
+    }
+
+    #[inline]
+    pub unsafe fn try_lock(&self) -> bool {
+        let locked = self.locked.get();
+        if *locked {
+            false
+        } else {
+            *locked = true;
+            true
+        }
     }
 
     #[inline]
     pub unsafe fn destroy(&self) {
-        unimplemented!()
     }
+}
+
+pub struct ReentrantMutex {
+}
+
+impl ReentrantMutex {
+    pub unsafe fn uninitialized() -> ReentrantMutex {
+        ReentrantMutex { }
+    }
+
+    pub unsafe fn init(&mut self) {}
+
+    pub unsafe fn lock(&self) {}
+
+    #[inline]
+    pub unsafe fn try_lock(&self) -> bool {
+        true
+    }
+
+    pub unsafe fn unlock(&self) {}
+
+    pub unsafe fn destroy(&self) {}
 }
