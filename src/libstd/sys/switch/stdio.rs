@@ -10,6 +10,9 @@
 
 use io;
 use sys::unsupported;
+use slice;
+
+use megaton_hammer::loader::{self, Logger, SocketKind};
 
 pub struct Stdin;
 pub struct Stdout;
@@ -27,38 +30,70 @@ impl Stdin {
 
 impl Stdout {
     pub fn new() -> io::Result<Stdout> {
-        unsupported()
+        Ok(Stdout)
     }
 
-    pub fn write(&self, _data: &[u8]) -> io::Result<usize> {
-        unsupported()
+    pub fn write(&self, data: &[u8]) -> io::Result<usize> {
+        use megaton_ipc::nn::socket::sf::IClient;
+
+        Logger.write(&data[..data.len()]);
+        let msg_len = if let Some((kind, stdout)) = loader::get_stdout_socket() {
+            let client = match kind {
+                SocketKind::BsdU => IClient::new_bsd_u(),
+                SocketKind::BsdS => IClient::new_bsd_s()
+            };
+            // Should be already initialized.
+            match client.and_then(|client| client.write(stdout, unsafe { slice::from_raw_parts(data.as_ptr() as *const i8, data.len()) })) {
+                Ok((ret, _bsd_errno)) if ret >= 0 => ret as usize,
+                _ => data.len()
+            }
+        } else {
+            data.len()
+        };
+        Ok(msg_len)
     }
 
     pub fn flush(&self) -> io::Result<()> {
-        unsupported()
+        Ok(())
     }
 }
 
 impl Stderr {
     pub fn new() -> io::Result<Stderr> {
-        unsupported()
+        Ok(Stderr)
     }
 
-    pub fn write(&self, _data: &[u8]) -> io::Result<usize> {
-        unsupported()
+    pub fn write(&self, data: &[u8]) -> io::Result<usize> {
+        use megaton_ipc::nn::socket::sf::IClient;
+
+        let msg_len = if let Some((kind, stderr)) = loader::get_stderr_socket() {
+            let client = match kind {
+                SocketKind::BsdU => IClient::new_bsd_u(),
+                SocketKind::BsdS => IClient::new_bsd_s()
+            };
+            // Should be already initialized.
+            match client.and_then(|client| client.write(stderr, unsafe { slice::from_raw_parts(data.as_ptr() as *const i8, data.len()) } )) {
+                Ok((ret, _bsd_errno)) if ret >= 0 => ret as usize,
+                _ => data.len()
+            }
+        } else {
+            data.len()
+        };
+        Logger.write(&data[..msg_len]);
+        Ok(msg_len)
     }
 
     pub fn flush(&self) -> io::Result<()> {
-        unsupported()
+        Ok(())
     }
 }
 
 impl io::Write for Stderr {
-    fn write(&mut self, _data: &[u8]) -> io::Result<usize> {
-        unsupported()
+    fn write(&mut self, data: &[u8]) -> io::Result<usize> {
+        Stderr::write(self, data)
     }
     fn flush(&mut self) -> io::Result<()> {
-        unsupported()
+        Stderr::flush(self)
     }
 }
 

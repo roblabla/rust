@@ -375,6 +375,8 @@ extern crate ralloc;
 
 #[cfg(target_os = "switch")]
 extern crate megaton_hammer;
+#[cfg(target_os = "switch")]
+extern crate megaton_ipc;
 
 extern crate std_unicode;
 #[cfg(not(target_os = "switch"))]
