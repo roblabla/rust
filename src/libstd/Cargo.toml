@@ -28,7 +28,6 @@ libc = { path = "../rustc/libc_shim" }
 alloc_system = { path = "../liballoc_system" }
 
 [target.'cfg(target_os = "switch")'.dependencies]
-ralloc = { git = "https://github.com/megatonhammer/ralloc", default-features = false }
 megaton-hammer = { git = "https://github.com/megatonhammer/megaton-hammer", features = ["std"] }
 megaton-ipc = { git = "https://github.com/megatonhammer/megaton-hammer" }
 
