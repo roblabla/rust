@@ -14,3 +14,6 @@ doc = false
 
 [target.'cfg(not(target_os = "switch"))'.dependencies]
 libc = { path = "../rustc/libc_shim" }
+
+[target.'cfg(target_os = "switch")'.dependencies]
+megaton-hammer = { path = "../../../megatonhammer/megaton-hammer" } #git = "https://github.com/megatonhammer/megaton-hammer" }

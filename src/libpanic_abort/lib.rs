@@ -62,14 +62,18 @@ pub unsafe extern fn __rust_start_panic(_data: usize, _vtable: usize) -> u32 {
         libc::abort();
     }
 
-    // TODO: We don't want to use the abort intrinsic, as that will cause a
-    // 2168-0000 on the switch. Instead, we should "properly" exit.
     #[cfg(any(target_os = "redox",
-              target_os = "switch",
               windows,
               all(target_arch = "wasm32", not(target_os = "emscripten"))))]
     unsafe fn abort() -> ! {
         core::intrinsics::abort();
+    }
+
+    #[cfg(target_os = "switch")]
+    unsafe fn abort() -> ! {
+        extern crate megaton_hammer;
+
+        megaton_hammer::loader::exit(1)
     }
 }
 
