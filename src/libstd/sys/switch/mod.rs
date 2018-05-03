@@ -55,8 +55,50 @@ pub fn unsupported_err() -> io::Error {
                    "operation not supported on wasm yet")
 }
 
-pub fn decode_error_kind(_errno: i32) -> ErrorKind {
-    io::ErrorKind::Other
+pub fn decode_error_kind(errno: i32) -> ErrorKind {
+    // Taken from linux, which is what net seems to use.
+    mod linux {
+        pub const ECONNREFUSED: i32 = 111;
+        pub const ECONNRESET: i32 = 104;
+        pub const EPERM: i32 = 1;
+        pub const EACCES: i32 = 13;
+        pub const EPIPE: i32 = 32;
+        pub const ENOTCONN: i32 = 107;
+        pub const ECONNABORTED: i32 = 103;
+        pub const EADDRNOTAVAIL: i32 = 99;
+        pub const EADDRINUSE: i32 = 98;
+        pub const ENOENT: i32 = 2;
+        pub const EINTR: i32 = 4;
+        pub const EINVAL: i32 = 22;
+        pub const ETIMEDOUT: i32 = 110;
+        pub const EEXIST: i32 = 17;
+        pub const EAGAIN: i32 = 11;
+        pub const EWOULDBLOCK: i32 = EAGAIN;
+    }
+
+    match errno {
+        linux::ECONNREFUSED => ErrorKind::ConnectionRefused,
+        linux::ECONNRESET => ErrorKind::ConnectionReset,
+        linux::EPERM | linux::EACCES => ErrorKind::PermissionDenied,
+        linux::EPIPE => ErrorKind::BrokenPipe,
+        linux::ENOTCONN => ErrorKind::NotConnected,
+        linux::ECONNABORTED => ErrorKind::ConnectionAborted,
+        linux::EADDRNOTAVAIL => ErrorKind::AddrNotAvailable,
+        linux::EADDRINUSE => ErrorKind::AddrInUse,
+        linux::ENOENT => ErrorKind::NotFound,
+        linux::EINTR => ErrorKind::Interrupted,
+        linux::EINVAL => ErrorKind::InvalidInput,
+        linux::ETIMEDOUT => ErrorKind::TimedOut,
+        linux::EEXIST => ErrorKind::AlreadyExists,
+
+        // These two constants can have the same value on some systems,
+        // but different values on others, so we can't use a match
+        // clause
+        x if x == linux::EAGAIN || x == linux::EWOULDBLOCK =>
+            ErrorKind::WouldBlock,
+
+        _ => ErrorKind::Other,
+    }
 }
 
 /// TODO: Do a proper abort using the exit stuff.
