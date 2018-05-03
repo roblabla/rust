@@ -366,6 +366,15 @@ impl Error for char::ParseCharError {
     }
 }
 
+// TODO: I am a terrible human being. This doesn't belong here, but I have to...
+#[stable(feature = "megaton_hammer", since = "1.0.0")]
+impl Error for ::megaton_hammer::error::Error {
+    fn description(&self) -> &str {
+        "MegatonHammer error occured"
+    }
+}
+
+
 // copied from any.rs
 impl Error + 'static {
     /// Returns true if the boxed type is the same as `T`
