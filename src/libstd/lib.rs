@@ -343,7 +343,7 @@ static ALLOC: alloc_system::System = alloc_system::System;
 
 #[cfg(target_os = "switch")]
 #[global_allocator]
-static ALLOC: megaton_hammer::allocator::Allocator = megaton_hammer::allocator::Allocator::new();
+static ALLOC: megaton_allocator::Allocator = megaton_allocator::Allocator::new();
 
 // Explicitly import the prelude. The compiler uses this same unstable attribute
 // to import the prelude implicitly when building crates that depend on std.
@@ -369,6 +369,8 @@ extern crate alloc_system;
 
 #[cfg(target_os = "switch")]
 extern crate megaton_hammer;
+#[cfg(target_os = "switch")]
+extern crate megaton_allocator;
 #[cfg(target_os = "switch")]
 extern crate megaton_ipc;
 #[cfg(not(target_os = "switch"))]
