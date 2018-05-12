@@ -13,6 +13,8 @@ use sys::unsupported;
 use slice;
 
 use megaton_hammer::loader::{self, Logger, SocketKind};
+use megaton_hammer::kernel::TransferMemory;
+use megaton_ipc::nn;
 
 pub struct Stdin;
 pub struct Stdout;
@@ -38,11 +40,23 @@ impl Stdout {
 
         Logger.write(&data[..data.len()]);
         let msg_len = if let Some((kind, stdout)) = loader::get_stdout_socket() {
-            let client = match kind {
-                SocketKind::BsdU => IClient::new_bsd_u(),
-                SocketKind::BsdS => IClient::new_bsd_s()
+            let init_args = |cb: fn(_, _, _, &_) -> _| {
+                let transfer_mem = TransferMemory::new(4 * 256 * 2 * 1024).expect("TransferMem creation to succeed");
+                cb(nn::socket::BsdBufferConfig {
+                    version: 1,
+                    tcp_tx_buf_size: 0x8000,
+                    tcp_rx_buf_size: 0x10_000,
+                    tcp_tx_buf_max_size: 0x40_000,
+                    tcp_rx_buf_max_size: 0x40_000,
+                    udp_tx_buf_size: 0x2400,
+                    udp_rx_buf_size: 0xA500,
+                    sb_efficiency: 4,
+                }, 0, 4 * 256 * 2 * 1024, transfer_mem.as_ref())
             };
-            // Should be already initialized.
+            let client = match kind {
+                SocketKind::BsdU => IClient::new_bsd_u(init_args),
+                SocketKind::BsdS => IClient::new_bsd_s(init_args)
+            };
             match client.and_then(|client| client.write(stdout, unsafe { slice::from_raw_parts(data.as_ptr() as *const i8, data.len()) })) {
                 Ok((ret, _bsd_errno)) if ret >= 0 => ret as usize,
                 _ => data.len()
@@ -67,9 +81,22 @@ impl Stderr {
         use megaton_ipc::nn::socket::sf::IClient;
 
         let msg_len = if let Some((kind, stderr)) = loader::get_stderr_socket() {
+            let init_args = |cb: fn(_, _, _, &_) -> _| {
+                let transfer_mem = TransferMemory::new(4 * 256 * 2 * 1024).expect("TransferMem creation to succeed");
+                cb(nn::socket::BsdBufferConfig {
+                    version: 1,
+                    tcp_tx_buf_size: 0x8000,
+                    tcp_rx_buf_size: 0x10_000,
+                    tcp_tx_buf_max_size: 0x40_000,
+                    tcp_rx_buf_max_size: 0x40_000,
+                    udp_tx_buf_size: 0x2400,
+                    udp_rx_buf_size: 0xA500,
+                    sb_efficiency: 4,
+                }, 0, 4 * 256 * 2 * 1024, transfer_mem.as_ref())
+            };
             let client = match kind {
-                SocketKind::BsdU => IClient::new_bsd_u(),
-                SocketKind::BsdS => IClient::new_bsd_s()
+                SocketKind::BsdU => IClient::new_bsd_u(init_args),
+                SocketKind::BsdS => IClient::new_bsd_s(init_args)
             };
             // Should be already initialized.
             match client.and_then(|client| client.write(stderr, unsafe { slice::from_raw_parts(data.as_ptr() as *const i8, data.len()) } )) {

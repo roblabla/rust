@@ -19,7 +19,8 @@ use self::netc as c;
 use mem;
 use slice;
 use sync::Arc;
-use megaton_hammer::kernel::Session;
+use megaton_hammer::kernel::{Session, TransferMemory, KObject};
+use megaton_ipc::nn;
 use megaton_ipc::nn::socket::sf::IClient;
 use megaton_ipc::nn::socket::resolver::IResolver;
 
@@ -60,7 +61,7 @@ fn sockname<F>(f: F) -> io::Result<SocketAddr>
 
 pub fn sockaddr_to_addr(storage: &c::sockaddr_storage,
                     len: usize) -> io::Result<SocketAddr> {
-    match storage.sa_family {
+    match storage.sin_family {
         c::AF_INET => {
             assert!(len as usize >= mem::size_of::<c::sockaddr_in>());
             Ok(SocketAddr::V4(FromInner::from_inner(unsafe {
@@ -79,17 +80,39 @@ pub fn sockaddr_to_addr(storage: &c::sockaddr_storage,
     }
 }
 
+fn init() -> io::Result<Arc<IClient<Session>>> {
+    fn init_args(cb: fn(nn::socket::BsdBufferConfig, u64, u64, &KObject) -> ::megaton_hammer::error::Result<IClient<Session>>) -> ::megaton_hammer::error::Result<IClient<Session>> {
+        let transfer_mem = TransferMemory::new(4 * 256 * 2 * 1024).expect("TransferMem creation to succeed");
+        cb(nn::socket::BsdBufferConfig {
+            version: 1,
+            tcp_tx_buf_size: 0x8000,
+            tcp_rx_buf_size: 0x10_000,
+            tcp_tx_buf_max_size: 0x40_000,
+            tcp_rx_buf_max_size: 0x40_000,
+            udp_tx_buf_size: 0x2400,
+            udp_rx_buf_size: 0xA500,
+            sb_efficiency: 4,
+        }, 0, 4 * 256 * 2 * 1024, transfer_mem.as_ref())
+    }
+    let bsd = if let Ok(bsd) = IClient::new_bsd_u(init_args) {
+        bsd
+    } else {
+        try_mth!(IClient::new_bsd_s(init_args))
+    };
+
+    // Leak the handle.
+    // TODO: We should clean it up at exit!
+    ::core::mem::forget(bsd.clone());
+    Ok(bsd)
+}
+
 impl TcpStream {
     pub fn connect(addr: &SocketAddr) -> io::Result<TcpStream> {
-        let bsd = if let Ok(bsd) = IClient::new_bsd_u() {
-            bsd
-        } else {
-            try_mth!(IClient::new_bsd_s())
-        };
-
         if let &SocketAddr::V6(_) = addr {
             return unsupported()
         }
+
+        let bsd = init()?;
 
         let (socket, _) = handle_err!(bsd.socket(netc::AF_INET as u32, 1, 0)); // SOCK_STREAM
 
@@ -630,7 +653,7 @@ pub mod netc {
         pub sin6_scope_id: u32,
     }
 
-    pub type sockaddr = ::megaton_ipc::nn::socket::Sockaddr;
+    pub type sockaddr = ::megaton_ipc::nn::socket::SockaddrIn;
 
     pub type sockaddr_storage = sockaddr;
 
