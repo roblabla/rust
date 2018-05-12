@@ -355,7 +355,15 @@ pub fn begin_panic_fmt(msg: &fmt::Arguments,
     // panic + OOM properly anyway (see comment in begin_panic
     // below).
 
-    rust_panic_with_hook(&mut PanicPayload::new(msg), Some(msg), file_line_col);
+    // rust_panic_with_hook(&mut PanicPayload::new(msg), Some(msg), file_line_col);
+
+    // We panic'd, locks might already be taken. Let's avoid infinite looping there.
+    let _ = writeln!(::megaton_hammer::loader::Logger, "PANIC: {} in {}:{}:{}", msg, file_line_col.0, file_line_col.1, file_line_col.2);
+
+    // TODO: Exit the program. Turns out this is surprisingly difficult.
+    // NOTE: This will not unwind the stack. If you panic, we'll almost
+    // certainly leak resources.
+    ::megaton_hammer::loader::exit(1)
 }
 
 // NOTE(stage0) move into `continue_panic_fmt` on next stage0 update
