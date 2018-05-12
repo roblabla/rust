@@ -107,8 +107,8 @@ pub fn home_dir() -> Option<PathBuf> {
     None
 }
 
-pub fn exit(_code: i32) -> ! {
-    loop {}
+pub fn exit(code: i32) -> ! {
+    ::megaton_hammer::loader::exit(code as u64);
 }
 
 pub fn getpid() -> u32 {
