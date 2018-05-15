@@ -88,6 +88,18 @@ impl fmt::Debug for Command {
     }
 }
 
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+pub struct ExitCode(i32);
+
+impl ExitCode {
+    pub const SUCCESS: ExitCode = ExitCode(0);
+    pub const FAILURE: ExitCode = ExitCode(1);
+
+    pub fn as_i32(&self) -> i32 {
+        self.0 as i32
+    }
+}
+
 pub struct ExitStatus(Void);
 
 impl ExitStatus {
