@@ -336,7 +336,7 @@
                 any(all(stage0, not(test)), feature = "force_alloc_system")),
         target_os = "switch"),
             feature(global_allocator))]
-#[cfg(all(all(not(target_env = "msvc"), not(target_os = "switch"),
+#[cfg(all(not(target_env = "msvc"), not(target_os = "switch"),
           any(all(stage0, not(test)), feature = "force_alloc_system")))]
 #[global_allocator]
 static ALLOC: alloc_system::System = alloc_system::System;

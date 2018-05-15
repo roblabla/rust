@@ -82,9 +82,13 @@ use sys_common::util::dumb_print;
 #[doc(inline)]
 pub use alloc_crate::alloc::*;
 
+#[cfg(not(target_os = "switch"))]
 #[stable(feature = "alloc_system_type", since = "1.28.0")]
 #[doc(inline)]
 pub use alloc_system::System;
+
+#[cfg(target_os = "switch")]
+use ALLOC as System;
 
 static HOOK: AtomicPtr<()> = AtomicPtr::new(ptr::null_mut());
 
@@ -154,7 +158,7 @@ pub mod __default_lib_allocator {
     #[rustc_std_internal_symbol]
     pub unsafe extern fn __rdl_alloc(size: usize, align: usize) -> *mut u8 {
         let layout = Layout::from_size_align_unchecked(size, align);
-        System.alloc(layout)
+        (&System).alloc(layout)
     }
 
     #[no_mangle]
@@ -162,7 +166,7 @@ pub mod __default_lib_allocator {
     pub unsafe extern fn __rdl_dealloc(ptr: *mut u8,
                                        size: usize,
                                        align: usize) {
-        System.dealloc(ptr, Layout::from_size_align_unchecked(size, align))
+        (&System).dealloc(ptr, Layout::from_size_align_unchecked(size, align))
     }
 
     #[no_mangle]
@@ -172,13 +176,13 @@ pub mod __default_lib_allocator {
                                        align: usize,
                                        new_size: usize) -> *mut u8 {
         let old_layout = Layout::from_size_align_unchecked(old_size, align);
-        System.realloc(ptr, old_layout, new_size)
+        (&System).realloc(ptr, old_layout, new_size)
     }
 
     #[no_mangle]
     #[rustc_std_internal_symbol]
     pub unsafe extern fn __rdl_alloc_zeroed(size: usize, align: usize) -> *mut u8 {
         let layout = Layout::from_size_align_unchecked(size, align);
-        System.alloc_zeroed(layout)
+        (&System).alloc_zeroed(layout)
     }
 }
