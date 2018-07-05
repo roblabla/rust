@@ -358,6 +358,7 @@ pub fn begin_panic_fmt(msg: &fmt::Arguments,
     // rust_panic_with_hook(&mut PanicPayload::new(msg), Some(msg), file_line_col);
 
     // We panic'd, locks might already be taken. Let's avoid infinite looping there.
+    ::megaton_hammer::loader::Logger.force_unlock();
     let _ = writeln!(::megaton_hammer::loader::Logger, "PANIC: {} in {}:{}:{}", msg, file_line_col.0, file_line_col.1, file_line_col.2);
 
     // TODO: Exit the program. Turns out this is surprisingly difficult.
@@ -427,14 +428,18 @@ fn continue_panic_fmt(info: &PanicInfo) -> ! {
     // required with the current scheme, and (b) we don't handle
     // panic + OOM properly anyway (see comment in begin_panic
     // below).
-
     let loc = info.location().unwrap(); // The current implementation always returns Some
     let msg = info.message().unwrap(); // The current implementation always returns Some
     let file_line_col = (loc.file(), loc.line(), loc.column());
-    rust_panic_with_hook(
-        &mut PanicPayload::new(msg),
-        info.message(),
-        &file_line_col);
+
+    unsafe { ::megaton_hammer::loader::Logger.force_unlock(); }
+    use core::fmt::Write;
+    let _ = writeln!(::megaton_hammer::loader::Logger, "PANIC: {} in {}:{}:{}", msg, file_line_col.0, file_line_col.1, file_line_col.2);
+
+    // TODO: Exit the program. Turns out this is surprisingly difficult.
+    // NOTE: This will not unwind the stack. If you panic, we'll almost
+    // certainly leak resources.
+    ::megaton_hammer::loader::exit(1)
 }
 
 /// This is the entry point of panicking for panic!() and assert!().
