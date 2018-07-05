@@ -30,7 +30,6 @@ alloc_system = { path = "../liballoc_system" }
 [target.'cfg(target_os = "switch")'.dependencies]
 megaton-allocator = { git = "https://github.com/megatonhammer/megaton-hammer" }
 megaton-hammer = { git = "https://github.com/megatonhammer/megaton-hammer", features = ["std"] }
-megaton-ipc = { git = "https://github.com/megatonhammer/megaton-hammer" }
 
 [dev-dependencies]
 rand = "0.4"

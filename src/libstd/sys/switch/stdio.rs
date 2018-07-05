@@ -14,7 +14,7 @@ use slice;
 
 use megaton_hammer::loader::{self, Logger, SocketKind};
 use megaton_hammer::kernel::TransferMemory;
-use megaton_ipc::nn;
+use megaton_hammer::ipcdefs::nn;
 
 pub struct Stdin;
 pub struct Stdout;
@@ -36,7 +36,7 @@ impl Stdout {
     }
 
     pub fn write(&self, data: &[u8]) -> io::Result<usize> {
-        use megaton_ipc::nn::socket::sf::IClient;
+        use megaton_hammer::ipcdefs::nn::socket::sf::IClient;
 
         Logger.write(&data[..data.len()]);
         let msg_len = if let Some((kind, stdout)) = loader::get_stdout_socket() {
@@ -78,7 +78,7 @@ impl Stderr {
     }
 
     pub fn write(&self, data: &[u8]) -> io::Result<usize> {
-        use megaton_ipc::nn::socket::sf::IClient;
+        use megaton_hammer::ipcdefs::nn::socket::sf::IClient;
 
         let msg_len = if let Some((kind, stderr)) = loader::get_stderr_socket() {
             let init_args = |cb: fn(_, _, _, &_) -> _| {

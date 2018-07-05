@@ -20,9 +20,9 @@ use mem;
 use slice;
 use sync::Arc;
 use megaton_hammer::kernel::{Session, TransferMemory, KObject};
-use megaton_ipc::nn;
-use megaton_ipc::nn::socket::sf::IClient;
-use megaton_ipc::nn::socket::resolver::IResolver;
+use megaton_hammer::ipcdefs::nn;
+use megaton_hammer::ipcdefs::nn::socket::sf::IClient;
+use megaton_hammer::ipcdefs::nn::socket::resolver::IResolver;
 
 pub struct TcpStream(Arc<IClient<Session>>, u32);
 
@@ -653,7 +653,7 @@ pub mod netc {
         pub sin6_scope_id: u32,
     }
 
-    pub type sockaddr = ::megaton_ipc::nn::socket::SockaddrIn;
+    pub type sockaddr = ::megaton_hammer::ipcdefs::nn::socket::SockaddrIn;
 
     pub type sockaddr_storage = sockaddr;
 
