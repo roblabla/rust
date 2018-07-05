@@ -368,8 +368,6 @@ extern crate alloc_system;
 extern crate megaton_hammer;
 #[cfg(target_os = "switch")]
 extern crate megaton_allocator;
-#[cfg(target_os = "switch")]
-extern crate megaton_ipc;
 #[cfg(not(target_os = "switch"))]
 #[doc(masked)]
 extern crate libc;
