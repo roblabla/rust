@@ -28,8 +28,8 @@ doc = false
 # expected success, got: exit code: 101', src/bootstrap/compile.rs:883:8
 #
 # See https://github.com/rust-lang/rfcs/pull/1133.
-core = { path = "../../libcore" }
-compiler_builtins = { path = "../compiler_builtins_shim" }
+#core = { path = "../../libcore" }
+#compiler_builtins = { path = "../compiler_builtins_shim" }
 
 
 [features]
