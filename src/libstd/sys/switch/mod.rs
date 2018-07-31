@@ -21,7 +21,6 @@
 use io::{self, ErrorKind};
 
 pub mod args;
-// TODO
 #[cfg(feature = "backtrace")]
 pub mod backtrace;
 pub mod cmath;
