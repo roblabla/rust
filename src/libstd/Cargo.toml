@@ -29,9 +29,9 @@ alloc_system = { path = "../liballoc_system" }
 [target.'cfg(target_os = "switch")'.dependencies]
 megaton-allocator = { git = "https://github.com/megatonhammer/megaton-hammer" }
 megaton-hammer = { git = "https://github.com/megatonhammer/megaton-hammer", features = ["std"] }
-gimli = { git = "https://github.com/gimli-rs/gimli", rev = "8a7743d3ff7d677dfb40e45dbca2a31b7ff13051", default-features = false, features = ["alloc"] }
-fallible-iterator = { version = "=0.1.4", default-features = false, features = ["alloc"] }
-addr2line = { git = "https://github.com/roblabla/addr2line", default-features = false }
+gimli = { git = "https://github.com/roblabla/gimli", branch = "megaton", default-features = false, features = ["alloc"] }
+fallible-iterator = { version = "0.1", default-features = false, features = ["alloc"] }
+addr2line = { git = "https://github.com/roblabla/addr2line", branch = "megaton", default-features = false, features = ["alloc"] }
 
 [dev-dependencies]
 rand = "0.4"
