@@ -18,6 +18,9 @@
 
 #![allow(dead_code, missing_docs, bad_style)]
 
+// Link against runwind here to avoid future conflicts
+extern crate runwind;
+
 use io::{self, ErrorKind};
 
 pub mod args;

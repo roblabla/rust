@@ -32,6 +32,7 @@ megaton-hammer = { git = "https://github.com/megatonhammer/megaton-hammer", feat
 gimli = { git = "https://github.com/roblabla/gimli", branch = "megaton", default-features = false, features = ["alloc"] }
 fallible-iterator = { version = "0.1", default-features = false, features = ["alloc"] }
 addr2line = { git = "https://github.com/roblabla/addr2line", branch = "megaton", default-features = false, features = ["alloc"] }
+runwind = { git = "https://github.com/roblabla/unwind-rs", branch = "megaton", default-features = false, features = ["nightly"] }
 
 [dev-dependencies]
 rand = "0.4"
