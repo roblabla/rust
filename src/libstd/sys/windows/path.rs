@@ -8,7 +8,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use path::Prefix;
+use path::{Prefix, PrefixComponent};
 use ffi::OsStr;
 use mem;
 
@@ -32,7 +32,7 @@ pub fn is_verbatim_sep(b: u8) -> bool {
 pub fn parse_prefix<'a>(path: &'a OsStr) -> Option<PrefixComponent> {
     let pathu8 = os_str_as_u8_slice(path);
     parse_prefix_simple(path)
-        .map(|v| PrefixComponent::from_os_str_kind(u8_slice_as_os_str(&pathu8[..v.len()]), v))
+        .map(|v| PrefixComponent::from_os_str_kind(unsafe { u8_slice_as_os_str(&pathu8[..v.len()]) }, v))
 }
 
 fn parse_prefix_simple<'a>(path: &'a OsStr) -> Option<Prefix> {

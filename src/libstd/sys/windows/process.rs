@@ -148,9 +148,11 @@ impl Command {
             if let Some(v) = env.get(OsStr::new("PATH")) {
                 // Split the value and test each path to see if the
                 // program exists.
-                for path in split_paths(&v) {
-                    let path = path.join(self.program.to_str().unwrap())
+                for oldpath in split_paths(&v) {
+                    let path = oldpath.join(self.program.to_str().unwrap())
                                    .with_extension(env::consts::EXE_EXTENSION);
+                    println!("{:?} + {:?} = {:?}", oldpath, self.program, path);
+
                     if fs::metadata(&path).is_ok() {
                         return Some(path.into_os_string())
                     }
