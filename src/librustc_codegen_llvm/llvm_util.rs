@@ -158,6 +158,7 @@ const X86_WHITELIST: &[(&str, Option<Symbol>)] = &[
     ("rdseed", None),
     ("rtm", Some(sym::rtm_target_feature)),
     ("sha", None),
+    ("soft-float", None),
     ("sse", None),
     ("sse2", None),
     ("sse3", None),
